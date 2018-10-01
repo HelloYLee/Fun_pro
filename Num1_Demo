@@ -1,6 +1,7 @@
 public final class Demo
 {
     
+    
     /*
      *  
 	 * 输入：i 一个小于10的正整数，无需做任何校验。
@@ -17,10 +18,13 @@ public final class Demo
     // 存储结果的二维数组
     public int[][] data;
     
+    // 存储已经走过的位置
+    private int[][] passed;
+    
     /**
      * 表示四个方向，向右，向下，向左，向上
      */
-    private int[][] option = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+    private Direction[] option = new Direction[4];
     
     public Demo(int i)
     {
@@ -29,19 +33,73 @@ public final class Demo
         int y = 0;
         int max = i * i;
         int index = 1;
+        int dir = 0;
         
-        while (max > index)
-        {
-            data[x][y] = index;
-            max++;
-            
-            if (y < i)
-            {
-                y = y + 1;
-                data[x][y] = max;
-                max++;
-            }
+        data = new int[i][i];
+        passed = new int[i][i];
+        
+        initDirection();
+        data[0][0] = index;
+        passed[0][0] = 1;
+        index++;
+        
+        while (max > index - 1)
+        {         	
+        	x = x + option[dir].getX();
+        	y = y + option[dir].getY();        	
+        	if (changeDirection(x, y, i)) 
+        	{
+        		x = x - option[dir].getX();
+        		y = y - option[dir].getY();
+        		dir++;
+        		if (4 == dir) 
+        		{
+        			dir = 0;
+        		}
+        		continue;
+        	}        	       	        	
+        	
+        	data[x][y] = index;
+        	passed[x][y] = 1;
+            index++;        	            
         }
+    }
+    
+    
+    private boolean changeDirection(int x, int y, int i) 
+    {
+    	// 到达边界
+    	if (x < 0 || y < 0 || x >= i || y >= i)
+    	{
+    		return true;
+    	}
+    	
+    	// 已经走过了
+    	if (1 == passed[x][y]) 
+    	{
+    		return true;
+    	}
+    	
+    	return false;
+    }
+    
+    private void initDirection() 
+    {
+    	for (int i = 0; i < 4; i++) 
+    	{
+    		option[i] = new Direction();    		
+    	}   	
+    	option[0].setX(0);
+    	option[0].setY(1);
+    	
+    	option[1].setX(1);
+    	option[1].setY(0);
+    	
+    	option[2].setX(0);
+    	option[2].setY(-1);
+    	
+    	option[3].setX(-1);
+    	option[3].setY(0);
     }
     
 }
